@@ -12,20 +12,20 @@ class Game {
         this.playerOne = document.getElementById('playerOne')
         this.playerTwo = document.getElementById('playerTwo')
 
-        // 2a set winCount
+        // 1b set winCount
         this.winCount = {
             x: 0,
             o: 0
         }
 
-        // 3a set gameState
+        // 1c set gameState
         this.gameState = [
             '', '', '',
             '', '', '',
             '', '', ''
         ]
 
-        // 4a set winningConditions
+        // 1d set winningConditions
         this.winningConditions = [
             [0, 1, 2],
             [3, 4, 5],
@@ -37,10 +37,90 @@ class Game {
             [2, 4, 6]
         ]
 
+        // 1e set players
         this.players = {
             player1: 'Player 1',
             player2: 'Player 2'
         }
     }
 
+    // 2 initializer
+    init() {
+        // setting player Text
+        this.playerOne.innerText = this.players.player1
+        this.playerTwo.innerText = this.players.player2
+
+        this.handleCellClicked()
+    }
+
+    // 3 handle clicked cell
+    handleCellClicked() {
+        // grab cell
+        const cells = document.querySelectorAll('.cell')
+
+        cells.forEach(cell => {
+            const cellIdx = parseInt(cell.getAttribute('data-cell-index'))
+            // if the cellIdx is not an empty string OR if gameActive is false...
+            cell.addEventListener('click', ()=> {
+                // console.log(cellIdx)
+                if (this.gameState[cellIdx] != '' || !this.gameActive) {
+                    return
+                }
+
+                this.handleCellPlayed(cell, cellIdx)
+                this.resultValidation()
+            })
+        })
+    }
+
+    // 4 handle cell played
+    handleCellPlayed(cell, idx) {
+        // console.log(cell, idx)
+        this.gameState[idx] = this.currentPlayer
+
+        // IMPERATIVE
+        this.currentPlayer == 'X' ? cell.classList.add('red') : cell.classList.add('blue')
+
+        /*
+        DECLARATIVE
+
+        if (this.currentPlayer == 'X') {
+            cell.classList.add('red')
+        }  else {
+            cell.classList.add('blue')
+        } 
+        */
+
+        cell.innerText = this.currentPlayer
+    }
+
+    // 5 resultValidation
+    resultValidation() {
+        let gameWon = false 
+
+        for (let i = 0; i <= 7; i++) {
+            const win = this.winningConditions[i]
+            // i = 0 => win == [0, 1, 2]
+
+            let a = this.gameState[win[0]]
+            let b = this.gameState[win[1]]
+            let c = this.gameState[win[2]]
+
+            if (a == '' || b == '' || c == '') {
+                continue
+            }
+
+            if (a == b && b == c) {
+                gameWon = true 
+                break 
+            }
+        }
+
+        // pick up here if(gameWon)
+    }
+
 }
+
+const action = new Game()
+
+action.init()
